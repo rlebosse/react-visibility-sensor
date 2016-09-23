@@ -6,7 +6,10 @@ var ReactDOM = require('react-dom');
 var containmentPropType = React.PropTypes.any;
 
 if (typeof window !== 'undefined') {
-  containmentPropType = React.PropTypes.instanceOf(Element);
+  containmentPropType = React.PropTypes.oneOfType([
+    React.PropTypes.instanceOf(Element),
+    React.PropTypes.string,
+  ]);
 }
 
 module.exports = React.createClass({
@@ -90,8 +93,10 @@ module.exports = React.createClass({
 
     rect = el.getBoundingClientRect();
 
-    if (this.props.containment) {
+    if (this.props.containment && this.props.containment instanceof Element) {
       containmentRect = this.props.containment.getBoundingClientRect();
+    } else if (this.props.containment && typeof this.props.containment === 'string') {
+      containmentRect = document.getElementById(this.props.containment).getBoundingClientRect();
     } else {
       containmentRect = {
         top: 0,
